@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>人脸识别考勤系统</title>
+    <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
+    <link rel="icon" href="statics/image/favicon.png" type="image/x-icon">
+    <link rel="stylesheet" href="statics/css/bootstrap.min.css">
+    <link rel="stylesheet" href="statics/css/font-awesome.min.css">
+    <link rel="stylesheet" href="statics/css/AdminLTE.min.css">
+    <link rel="stylesheet" type="text/css" href="statics/css/identify.css" />
+    <link rel="stylesheet" type="text/css" href="statics/css/layout.css" />
+    <link rel="stylesheet" type="text/css" href="statics/css/style.css" />
+    <link rel="stylesheet" type="text/css" href="statics/css/control_index.css" />
+    <style>
+      .sidebar-trans a{
+            text-align: left;
+            padding-left: 30px;
+        }
+    </style>
+</head>
+<body class="hold-transition skin-blue sidebar-mini">
+
+<div class=" " id="kanface_app" v-cloak>
+    <div class="view-topbar">
+        <div class="topbar-console">
+            <div class="tobar-head fl">
+                <a href="index.html" class="topbar-home-link topbar-btn text-center fl">
+                    <i class="fa fa-tv"></i>
+                    <span>  人脸识别考勤系统</span>
+                </a>
+            </div>
+        </div>
+        <div class="topbar-info">
+            <ul class="fr">
+                <li class="fl topbar-info-item">
+                    <div class="dropdown">
+                        <a  class="topbar-btn">
+                           当前用户: {{user.username}}
+                        </a>
+                    </div>
+                </li>
+                <li class="fl topbar-info-item">
+                    <div class="dropdown">
+                        <a @click="uploadInfo" class="topbar-btn">
+                            <span class="fl text-normal"><i class="fa fa-user"> 个人信息</i></span>
+                        </a>
+                    </div>
+                </li>
+                <li class="fl topbar-info-item">
+                    <div class="dropdown">
+                        <a @click="updatePassword" class="topbar-btn">
+                            <span class="fl text-normal"><i class="fa fa-lock"> 修改密码</i></span>
+                        </a>
+                    </div>
+                </li>
+                <li class="fl topbar-info-item">
+                    <div class="dropdown">
+                        <a href="logout" class="topbar-btn">
+                            <span class="fl text-normal"><i class="fa fa-power-off"> 退出</i></span>
+                        </a>
+                    </div>
+                </li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="view-body">
+        <div class="view-sidebar">
+            <div class="sidebar-content">
+                <div class="sidebar-nav">
+                    <ul class="sidebar-trans">
+                        <menu-item :item="item" v-for="item in menuList"></menu-item>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="view-product background-color">
+            <section class="content" style="background:#fff;">
+                <div class=" padding-big-tb manage-head"><h6 class="padding-left manage-head-con">{{navTitle}}</h6></div>
+                <iframe scrolling="yes" frameborder="0"
+                        style="width:100%;min-height:200px;overflow:visible;background:#fff;margin-top: 15px;" :src="main"></iframe>
+            </section>
+        </div>
+    </div>
+
+    <div id="passwordLayer" style="display: none;">
+        <form class="form-horizontal" style="width: 350px;margin: 20px auto">
+            <div class="form-group">
+                <div class="form-group">
+                    <div class="col-sm-2 control-label">账号</div>
+                    <span class="label label-success" style="vertical-align: bottom;">{{user.username}}</span>
+                </div>
+                <div class="form-group">
+                    <div class="col-sm-2 control-label">原密码</div>
+                    <div class="col-sm-10">
+                        <input type="password" class="form-control" v-model="password" placeholder="原密码"/>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="col-sm-2 control-label">新密码</div>
+                    <div class="col-sm-10">
+                        <input type="text" class="form-control" v-model="newPassword" placeholder="新密码"/>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+
+    <div id="infoLayer" style="display: none;">
+        <form class="form-horizontal" style="width: 350px;margin: 20px auto">
+            <div class="form-group">
+                <div class="form-group">
+                    <div class="col-sm-2 control-label">用户</div>
+                    <div  class="col-sm-10 fcs form-control-static">{{user.username}}</div>
+                </div>
+                <div class="form-group">
+                    <div class="col-sm-2 control-label">邮箱</div>
+                    <div class="col-sm-10">
+                        <input type="text" class="form-control" v-model="user.email" placeholder="邮箱"/>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="col-sm-2 control-label">手机</div>
+                    <div class="col-sm-10">
+                        <input type="text" class="form-control" v-model="user.mobile" placeholder="手机"/>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script src="statics/libs/jquery.min.js"></script>
+<script src="statics/libs/vue.min.js"></script>
+<script src="statics/libs/router.js"></script>
+<script src="statics/libs/bootstrap.min.js"></script>
+<script src="statics/libs/jquery.slimscroll.min.js"></script>
+<script src="statics/libs/fastclick.min.js"></script>
+<script src="statics/libs/app.js"></script>
+<script src="statics/plugins/layer/layer.js"></script>
+<script src="js/generatorMenu.js"></script>
+</body>
+</html>

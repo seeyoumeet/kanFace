@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.seeyoumeet.dao.SMSRecordDao">
+
+    <!-- 可根据自己的需求，是否要使用 -->
+    <resultMap type="com.seeyoumeet.entity.SMSRecordEntity" id="SMSRecordMap">
+        <result property="id" column="id"/>
+        <result property="phone" column="phone"/>
+        <result property="code" column="code"/>
+        <result property="time" column="time"/>
+    </resultMap>
+
+    <select id="queryObject" resultType="com.seeyoumeet.entity.SMSRecordEntity">
+		select * from sms_record where id = #{value}
+	</select>
+    <select id="selectByPhoneAndCreateTime" resultType="com.seeyoumeet.entity.SMSRecordEntity">
+        select * from sms_record where 1=1 and phone = #{phone} and time >= #{time}
+    </select>
+    <select id="queryList" resultType="com.seeyoumeet.entity.SMSRecordEntity">
+        select * from sms_record where 1=1
+        <if test="phone != null and phone != ''">
+            and phone like '%${phone}%'
+        </if>
+
+
+        <choose>
+            <when test="sidx != null and sidx.trim() != ''">
+                order by ${sidx} ${order}
+            </when>
+            <otherwise>
+                order by id desc
+            </otherwise>
+        </choose>
+        <if test="offset != null and limit != null">
+            limit #{offset}, #{limit}
+        </if>
+    </select>
+
+    <select id="queryTotal" resultType="int">
+        select count(*) from sms_record where 1=1
+        <if test="phone != null and phone != ''">
+            and phone like '%${phone}%'
+        </if>
+    </select>
+
+    <insert id="save" parameterType="com.seeyoumeet.entity.SMSRecordEntity" useGeneratedKeys="true" keyProperty="id">
+		insert into sms_record
+		(
+			`phone`, 
+			`code`, 
+			`time`
+		)
+		values
+		(
+			#{phone}, 
+			#{code}, 
+			#{time}
+		)
+	</insert>
+
+    <update id="update" parameterType="com.seeyoumeet.entity.SMSRecordEntity">
+        update sms_record
+        <set>
+            <if test="phone != null">`phone` = #{phone},</if>
+            <if test="code != null">`code` = #{code},</if>
+            <if test="time != null">`time` = #{time}</if>
+        </set>
+        where id = #{id}
+    </update>
+
+    <delete id="delete">
+		delete from sms_record where id = #{value}
+	</delete>
+
+    <delete id="deleteBatch">
+        delete from sms_record where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+</mapper>

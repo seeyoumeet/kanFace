@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.seeyoumeet.dao.ChooseCourseDao">
+
+    <!-- 可根据自己的需求，是否要使用 -->
+    <resultMap type="com.seeyoumeet.entity.ChooseCourseEntity" id="ChooseCourseMap">
+        <result property="id" column="id"/>
+        <result property="CourseDetail" column="course_detail_id"/>
+        <result property="sysUser" column="sys_user"/>
+    </resultMap>
+
+    <select id="queryObject" resultType="com.seeyoumeet.entity.ChooseCourseEntity">
+		select * from choose_course where id = #{value}
+	</select>
+
+    <select id="queryList" resultType="com.seeyoumeet.entity.ChooseCourseEntity">
+        select * from choose_course where 1=1
+        <if test="CourseDetail != null and CourseDetail != ''">
+            and course_detail_id = #{CourseDetail}
+        </if>
+        <if test="sysUser != null and sysUser != ''">
+            and sys_user = #{sysUser}
+        </if>
+
+
+        <choose>
+            <when test="sidx != null and sidx.trim() != ''">
+                order by ${sidx} ${order}
+            </when>
+            <otherwise>
+                order by id desc
+            </otherwise>
+        </choose>
+        <if test="offset != null and limit != null">
+            limit #{offset}, #{limit}
+        </if>
+    </select>
+
+    <select id="queryTotal" resultType="int">
+        select count(*) from choose_course where 1=1
+        <if test="CourseDetail != null and CourseDetail != ''">
+            and course_detail_id like '%${CourseDetail}%'
+        </if>
+        <if test="sysUser != null and sysUser != ''">
+            and sys_user = #{sysUser}
+        </if>
+
+    </select>
+
+    <insert id="save" parameterType="com.seeyoumeet.entity.ChooseCourseEntity" useGeneratedKeys="true" keyProperty="id">
+		insert into choose_course
+		(
+			`course_detail_id`,
+			`sys_user`
+		)
+		values
+		(
+			#{CourseDetail},
+			#{sysUser}
+		)
+	</insert>
+
+    <update id="update" parameterType="com.seeyoumeet.entity.ChooseCourseEntity">
+        update choose_course
+        <set>
+            <if test="CourseDetail != null">`course_detail_id` = #{CourseDetail},</if>
+            <if test="sysUser != null">`sys_user` = #{sysUser}</if>
+        </set>
+        where id = #{id}
+    </update>
+
+    <delete id="delete">
+		delete from choose_course where id = #{value}
+	</delete>
+
+    <delete id="deleteBatch">
+        delete from choose_course where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+</mapper>

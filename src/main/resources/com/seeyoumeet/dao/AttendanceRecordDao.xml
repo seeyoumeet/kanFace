@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.seeyoumeet.dao.AttendanceRecordDao">
+
+    <!-- 可根据自己的需求，是否要使用 -->
+    <resultMap type="com.seeyoumeet.entity.AttendanceRecordEntity" id="AttendanceRecordMap">
+        <result property="id" column="id"/>
+        <result property="CourseDetail" column="course_detail"/>
+        <result property="time" column="time"/>
+        <result property="teacher" column="teacher"/>
+        <result property="student" column="student"/>
+        <result property="startclassStatus" column="startclass_status"/>
+        <result property="finishedclassStatus" column="finishedclass_status"/>
+    </resultMap>
+
+    <select id="tj" resultType="java.util.Map">
+        SELECT * FROM (
+        SELECT a.student,a.counutsum,IFNULL(b.skzk,0) skzk,IFNULL(c.skcd,0) skcd,IFNULL(d.xkzc,0)xkzc,IFNULL(e.xkcd,0) xkcd FROM(
+            SELECT student,COUNT(*) counutsum FROM attendance_record  GROUP BY bkhxs
+        )a LEFT JOIN(
+            SELECT student,COUNT(*) skzk FROM attendance_record WHERE startclass_status = 0  GROUP BY student
+        )b ON a.student = b.student
+        LEFT JOIN(
+            SELECT student,COUNT(*) skcd FROM attendance_record WHERE startclass_status = 1  GROUP BY student
+        )c ON a.student = c.student
+        LEFT JOIN (
+            SELECT student,COUNT(*) xkzc FROM attendance_record WHERE finishedclass_status = 0  GROUP BY student
+        )d ON a.student = d.student
+        LEFT JOIN(
+            SELECT student,COUNT(*) xkcd FROM attendance_record WHERE finishedclass_status = 1  GROUP BY student
+        )e ON a.student = e.student
+        )t
+        <if test="offset != null and limit != null">
+            limit #{offset}, #{limit}
+        </if>
+    </select>
+
+    <select id="conutTj" resultType="int">
+        SELECT COUNT(*) FROM (SELECT a.student,a.counutsum,IFNULL(b.skzk,0) skzk,IFNULL(c.skcd,0) skcd,IFNULL(d.xkzc,0)xkzc,IFNULL(e.xkcd,0) xkcd FROM(
+            SELECT student,COUNT(*) counutsum FROM attendance_record  GROUP BY student
+        )a LEFT JOIN(
+            SELECT student,COUNT(*) skzk FROM attendance_record WHERE startclass_status = 0  GROUP BY student
+        )b ON a.student = b.student
+        LEFT JOIN(
+            SELECT student,COUNT(*) skcd FROM attendance_record WHERE startclass_status = 1  GROUP BY student
+        )c ON a.student = c.student
+        LEFT JOIN (
+            SELECT student,COUNT(*) xkzc FROM attendance_record WHERE finishedclass_status = 0  GROUP BY student
+        )d ON a.student = d.student
+        LEFT JOIN(
+            SELECT student,COUNT(*) xkcd FROM attendance_record WHERE finishedclass_status = 1  GROUP BY student
+        )e ON a.student = e.student
+        )t
+    </select>
+
+    <select id="queryObject" resultType="com.seeyoumeet.entity.AttendanceRecordEntity">
+		select * from attendance_record where id = #{value}
+	</select>
+
+    <select id="queryList" resultType="com.seeyoumeet.entity.AttendanceRecordEntity">
+        select * from attendance_record where 1=1
+        <if test="CourseDetail != null and CourseDetail != ''">
+            and course_detail =#{CourseDetail}
+        </if>
+        <if test="time != null and time != ''">
+            and time =#{time}
+        </if>
+        <if test="student != null and student != ''">
+            and student =#{student}
+        </if>
+
+        <choose>
+            <when test="sidx != null and sidx.trim() != ''">
+                order by ${sidx} ${order}
+            </when>
+            <otherwise>
+                order by id desc
+            </otherwise>
+        </choose>
+        <if test="offset != null and limit != null">
+            limit #{offset}, #{limit}
+        </if>
+    </select>
+
+    <select id="queryTotal" resultType="int">
+        select count(*) from AttendanceRecord where 1=1
+        <if test="CourseDetail != null and CourseDetail != ''">
+            and course_detail like '%${CourseDetail}%'
+        </if>
+    </select>
+
+    <insert id="save" parameterType="com.seeyoumeet.entity.AttendanceRecordEntity" useGeneratedKeys="true" keyProperty="id">
+		insert into AttendanceRecord
+		(
+			`course_detail`,
+			`time`, 
+			`teacher`,
+			`student`,
+			`startclass_status`,
+			`finishedclass_status`
+		)
+		values
+		(
+			#{CourseDetail},
+			#{time}, 
+			#{teacher},
+			#{student},
+			#{startclassStatus},
+			#{finishedclassStatus}
+		)
+	</insert>
+
+    <update id="update" parameterType="com.seeyoumeet.entity.AttendanceRecordEntity">
+        update AttendanceRecord
+        <set>
+            <if test="CourseDetail != null">`course_detail` = #{CourseDetail},</if>
+            <if test="time != null">`time` = #{time},</if>
+            <if test="teacher != null">`teacher` = #{teacher},</if>
+            <if test="student != null">`student` = #{student},</if>
+            <if test="startclassStatus != null">`startclass_status` = #{startclassStatus},</if>
+            <if test="finishedclassStatus != null">`finishedclass_status` = #{finishedclassStatus}</if>
+        </set>
+        where id = #{id}
+    </update>
+
+    <delete id="delete">
+		delete from AttendanceRecord where id = #{value}
+	</delete>
+
+    <delete id="deleteBatch">
+        delete from AttendanceRecord where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+</mapper>

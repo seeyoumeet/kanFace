@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.seeyoumeet.dao.CourseDetailDao">
+
+	<!-- 可根据自己的需求，是否要使用 -->
+    <resultMap type="com.seeyoumeet.entity.CourseDetailEntity" id="CourseDetailMap">
+        <result property="id" column="id"/>
+        <result property="title" column="title"/>
+        <result property="content" column="content"/>
+        <result property="sysUser" column="sys_user"/>
+        <result property="classPeriod" column="class_period"/>
+    </resultMap>
+
+	<select id="queryObject" resultType="com.seeyoumeet.entity.CourseDetailEntity">
+		select * from course_detail where id = #{value}
+	</select>
+
+	<select id="queryList" resultType="com.seeyoumeet.entity.CourseDetailEntity">
+		select * from course_detail where 1=1
+		<if test="title != null and title != ''">
+			and title like '%${title}%'
+		</if>
+		<if test="sysUser != null and sysUser  != ''">
+			and sys_user =  #{sysUser}
+		</if>
+
+        <choose>
+            <when test="sidx != null and sidx.trim() != ''">
+                order by ${sidx} ${order}
+            </when>
+			<otherwise>
+                order by id desc
+			</otherwise>
+        </choose>
+		<if test="offset != null and limit != null">
+			limit #{offset}, #{limit}
+		</if>
+	</select>
+	
+ 	<select id="queryTotal" resultType="int">
+		select count(*) from course_detail  where 1=1
+        <if test="title != null and title != ''">
+            and title like '%${title}%'
+        </if>
+	</select>
+	 
+	<insert id="save" parameterType="com.seeyoumeet.entity.CourseDetailEntity" useGeneratedKeys="true" keyProperty="id">
+		insert into CourseDetail
+		(
+			`title`, 
+			`content`, 
+			`sys_user`, 
+			`class_period`
+		)
+		values
+		(
+			#{title}, 
+			#{content}, 
+			#{sysUser}, 
+			#{classPeriod}
+		)
+	</insert>
+	 
+	<update id="update" parameterType="com.seeyoumeet.entity.CourseDetailEntity">
+		update course_detail
+		<set>
+			<if test="title != null">`title` = #{title}, </if>
+			<if test="content != null">`content` = #{content}, </if>
+			<if test="sysUser != null">`sys_user` = #{sysUser}, </if>
+			<if test="classPeriod != null">`class_period` = #{classPeriod}</if>
+		</set>
+		where id = #{id}
+	</update>
+	
+	<delete id="delete">
+		delete from course_detail where id = #{value}
+	</delete>
+	
+	<delete id="deleteBatch">
+		delete from course_detail where id in
+		<foreach item="id" collection="array" open="(" separator="," close=")">
+			#{id}
+		</foreach>
+	</delete>
+
+</mapper>

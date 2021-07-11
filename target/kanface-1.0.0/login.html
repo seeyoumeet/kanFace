@@ -1,0 +1,113 @@
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge,chrome=1">
+    <title>人脸识别考勤系统</title>
+    <meta name="keywords" content="人脸识别考勤系统"/>
+    <meta name="description" content="人脸识别考勤系统"/>
+    <link rel="icon" href="statics/image/favicon.png" type="image/x-icon">
+    <link href="statics/css/layout.css" rel="stylesheet" type="text/css">
+    <link href="statics/css/login.css" rel="stylesheet" type="text/css">
+</head>
+<style>
+    .ibar {
+        display: none;
+    }
+</style>
+<body class="login-bg">
+<div class="main " id="kanface_app">
+    <!--登录-->
+    <div class="login-dom login-max">
+        <div class="logo text-center">
+            <a href="#">
+                <img src="statics/image/favicon.png" width="160px" height="160px">
+            </a>
+        </div>
+        <div class="login container " id="login">
+            <p class="text-big text-center logo-color">
+                kanface 考勤系统
+            </p>
+
+            <form class="login-form" onsubmit="return false" method="post" autocomplete="off">
+                <div class="login-box border text-small" id="box" style="height: auto;">
+                    <div class="name border-bottom">
+                        <label id="account-icon" class="loginbox-icon"></label>
+                        <input type=" xt" placeholder="请填写帐号信息" v-model="username" id="username" name="username"
+                               datatype="*" nullmsg="请填写帐号信息">
+                    </div>
+                    <div class="pwd">
+                        <label id="password-icon" class="loginbox-icon"></label>
+                        <input type="password" placeholder="请填写帐号密码" v-model="password" datatype="*" id="password"
+                               name="password" nullmsg="请填写帐号密码">
+                    </div>
+                </div>
+                <input type="submit" class="btn text-center login-btn" @click="login" value="立即登录">
+            </form>
+            <div class="forget">
+                <!--忘记密码-->
+            </div>
+        </div>
+    </div>
+
+    <div class="footer text-center text-small ie">
+        Copyright 2020-2021 seeyoumeet 版权所有
+        <script src="#" language="JavaScript"></script>
+    </div>
+    <div class="popupDom">
+        <div class="popup text-default">
+        </div>
+    </div>
+</div>
+
+<!-- /.login-box -->
+<script src="statics/libs/jquery.min.js"></script>
+<script src="statics/libs/vue.min.js"></script>
+<script src="statics/libs/bootstrap.min.js"></script>
+<script src="statics/libs/jquery.slimscroll.min.js"></script>
+<script src="statics/libs/fastclick.min.js"></script>
+<script src="statics/plugins/layer/layer.js"></script>
+<script src="statics/libs/app.js"></script>
+
+<!-- 用Vuejs进行页面数据初始化 -->
+<script type="text/javascript">
+    var vm = new Vue({
+        el: '#kanface_app',
+        data: {
+            username: 'admin',
+            password: '123123',
+            captcha: null,
+            error: false,
+            errorMsg: null,
+        },
+        beforeCreate: function () {
+            if (self != top) {
+                top.location.href = self.location.href;
+            }
+        },
+        created: function () {
+        },
+        methods: {
+            refreshCode: function () {
+                this.src = "captcha.jpg?t=" + $.now();
+            },
+            login: function (event) {
+                var data = "username=" + this.username + "&password=" + this.password + "&=";
+                $.ajax({
+                    type: "POST",
+                    url: "sys/login",
+                    data: data,
+                    dataType: "json",
+                    success: function (result) {
+                        if (result.code == 0) {  //登录成功
+                            parent.location.href = 'index.html';
+                        } else {
+                            layer.msg(result.msg);
+                        }
+                    }
+                });
+            }
+        }
+    });
+</script>
+</body>
+</html>

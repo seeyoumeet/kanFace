@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>学生请假</title>
+    #parse("sys/header.html")
+</head>
+<body>
+<div id="kanface_app" v-cloak>
+    <div v-show="showList">
+        <div class="grid-btn">
+            <div class="form-group col-sm-2">
+                <input type="text" class="form-control" v-model="q.sysUser" @keyup.enter="query" placeholder="关键字">
+            </div>
+            <a class="btn btn-default" @click="query">查询</a>
+            <!--			#if($shiro.hasPermission("StudentLeave:save"))-->
+            <!--			<a class="btn btn-primary" @click="add"><i class="fa fa-plus"></i>&nbsp;新增</a>-->
+            <!--			#end-->
+            <!--			#if($shiro.hasPermission("StudentLeave:update"))-->
+<!--            <a class="btn btn-primary" @click="update"><i class="fa fa-pencil-square-o"></i>&nbsp;审核</a>-->
+            <!--			#end-->
+            <!--			#if($shiro.hasPermission("StudentLeave:delete"))-->
+            <!--			<a class="btn btn-primary" @click="del"><i class="fa fa-trash-o"></i>&nbsp;删除</a>-->
+            <!--			#end-->
+<!--            <a class="btn btn-primary" @click="update"><i class="fa fa-info"></i>&nbsp;审核</a>-->
+            <a class="btn btn-primary" @click="info"><i class="fa fa-info"></i>&nbsp;详情</a>
+        </div>
+        <table id="jqGrid"></table>
+        <div id="jqGridPager"></div>
+    </div>
+
+    <div v-show="!showList" class="panel panel-success">
+        <div class="panel-heading">{{title}}</div>
+        <form class="form-horizontal">
+            <div class="form-group">
+                <div class="col-sm-2 control-label">请假学生</div>
+                <div class="col-sm-10">
+                    <select class="form-control" :disabled="true" v-model="StudentLeave.sysUser">
+                        <option v-for="l in sysUsers" :value="l.userId">{{l.username}}</option>
+                    </select>
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="col-sm-2 control-label">请假类型</div>
+                <div class="col-sm-10">
+                    <input type="text" class="form-control" :disabled="true" v-model="StudentLeave.qjlx"
+                           placeholder="请假类型"/>
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="col-sm-2 control-label">请假开始时间</div>
+                <div class="col-sm-10">
+                    <input type="text" class="form-control" :disabled="true" v-model="StudentLeave.beginTime"
+                           placeholder="请假开始时间"/>
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="col-sm-2 control-label">请假结束时间</div>
+                <div class="col-sm-10">
+                    <input type="text" class="form-control" :disabled="true" v-model="StudentLeave.endTime"
+                           placeholder="请假结束时间"/>
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="col-sm-2 control-label">请假天数</div>
+                <div class="col-sm-10">
+                    <input type="text" class="form-control" :disabled="true" v-model="StudentLeave.days"
+                           placeholder="请假天数"/>
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="col-sm-2 control-label">请假原因</div>
+                <div class="col-sm-10">
+                    <textarea class="form-control" :disabled="true" v-model="StudentLeave.content" placeholder="请假原因"
+                              cols="30" rows="20"></textarea>
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="col-sm-2 control-label">老师审批</div>
+                <div class="col-sm-10">
+<!--                    <input type="text" class="form-control" :disabled="showInfo" v-model="StudentLeave.lssp"-->
+<!--                           placeholder="老师审批"/>-->
+                    <select class="form-control" :disabled="showInfo" v-model="StudentLeave.lssp">
+                        <option v-for="l in lasps" :value="l.id">{{l.name}}</option>
+                    </select>
+                </div>
+            </div>
+<!--            <div class="form-group">-->
+<!--                <div class="col-sm-2 control-label">管理员审批</div>-->
+<!--                <div class="col-sm-10">-->
+<!--                    <input type="text" class="form-control" :disabled="showInfo" v-model="StudentLeave.glysp"-->
+<!--                           placeholder="管理员审批"/>-->
+<!--                </div>-->
+<!--            </div>-->
+            <div class="form-group">
+                <div class="col-sm-2 control-label"></div>
+                <input type="button" class="btn btn-primary" @click="saveOrUpdate" value="确定" v-if="!showInfo"/>
+                &nbsp;&nbsp;<input type="button" class="btn btn-warning" @click="reload" value="返回"/>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script src="${rc.contextPath}/js/admin/StudentLeave.js?_${date.systemTime}"></script>
+</body>
+</html>
